@@ -1,4 +1,4 @@
-package com.mas.firebasetutorial.ui.main
+package com.mas.firebasetutorial.ui.fragment.main
 
 import androidx.lifecycle.ViewModel
 
