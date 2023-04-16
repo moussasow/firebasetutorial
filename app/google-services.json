@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "936870872885",
+    "project_id": "mas-firebase-tutorial",
+    "storage_bucket": "mas-firebase-tutorial.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936870872885:android:c43b92f6e9504689fcae7c",
+        "android_client_info": {
+          "package_name": "com.mas.firebasetutorial"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "936870872885-ij0cs0icjb538ah9mprllk44r95a6kmj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-U18bmWSBqeUzdmk4IYig-mMZKrkQijs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "936870872885-ij0cs0icjb538ah9mprllk44r95a6kmj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

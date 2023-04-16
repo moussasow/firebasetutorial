@@ -2,7 +2,7 @@ package com.mas.firebasetutorial
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.mas.firebasetutorial.ui.main.MainFragment
+import com.mas.firebasetutorial.ui.fragment.main.MainFragment
 
 class MainActivity : AppCompatActivity() {
 

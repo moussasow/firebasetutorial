@@ -1,4 +1,4 @@
-package com.mas.firebasetutorial.ui.main
+package com.mas.firebasetutorial.ui.fragment.main
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -7,13 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mas.firebasetutorial.R
+import com.mas.firebasetutorial.databinding.FragmentMainBinding
+import com.mas.firebasetutorial.ui.fragment.BaseFragment
+import com.mas.firebasetutorial.ui.fragment.login.LoginFragment
 
-class MainFragment : Fragment() {
+class MainFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = MainFragment()
     }
 
+    private lateinit var binding: FragmentMainBinding
     private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +30,15 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        binding = FragmentMainBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.btnLogin.setOnClickListener {
+            transitFragment(LoginFragment.newInstance(LoginFragment.AUTH_TYPE_LOGIN))
+        }
+    }
 }
