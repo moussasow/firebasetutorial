@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
+import com.google.firebase.auth.FirebaseAuth
 import com.mas.firebasetutorial.ui.fragment.login.data.LoginRepository
-import com.mas.firebasetutorial.ui.fragment.login.data.Result
 
 import com.mas.firebasetutorial.R
 
@@ -17,14 +17,37 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
-    fun login(username: String, password: String) {
-        // can be launched in a separate asynchronous job
-        val result = loginRepository.login(username, password)
-
-        if (result is Result.Success) {
-            _loginResult.value = LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
+    fun login(username: String, password: String, authType: Int) {
+        val auth = FirebaseAuth.getInstance()
+        if (authType == 1) {
+            auth.signInWithEmailAndPassword(username, password)
+                .addOnSuccessListener { task ->
+                    _loginResult.value = LoginResult(
+                        success = LoggedInUserView(
+                            displayName = task.additionalUserInfo?.username
+                                ?: "guest",
+                            userName = username
+                        )
+                    )
+                }
+                .addOnFailureListener {
+                    _loginResult.value = LoginResult(error = R.string.login_failed)
+                }
         } else {
-            _loginResult.value = LoginResult(error = R.string.login_failed)
+            auth.createUserWithEmailAndPassword(username, password).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val user = task.result.user
+                    _loginResult.value = LoginResult(
+                        success = LoggedInUserView(
+                            displayName = user?.displayName
+                                ?: "guest",
+                            userName = username
+                        )
+                    )
+                } else {
+                    _loginResult.value = LoginResult(error = R.string.login_failed)
+                }
+            }
         }
     }
 

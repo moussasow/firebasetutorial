@@ -38,7 +38,7 @@ class MainFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnLogin.setOnClickListener {
-            transitFragment(LoginFragment.newInstance(""))
+            transitFragment(LoginFragment.newInstance(LoginFragment.AUTH_TYPE_LOGIN))
         }
     }
 }

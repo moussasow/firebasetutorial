@@ -1,6 +1,8 @@
 package com.mas.firebasetutorial.ui.fragment
 
+import android.view.View
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import com.mas.firebasetutorial.R
 
 open class BaseFragment : Fragment() {
@@ -9,5 +11,9 @@ open class BaseFragment : Fragment() {
         val transaction = parentFragmentManager.beginTransaction()
         transaction.replace(R.id.container, fragment)
         transaction.commitNow()
+    }
+
+    fun displaySnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
     }
 }

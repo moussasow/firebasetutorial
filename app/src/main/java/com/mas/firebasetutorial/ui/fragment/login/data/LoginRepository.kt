@@ -1,5 +1,7 @@
 package com.mas.firebasetutorial.ui.fragment.login.data
 
+import androidx.lifecycle.MutableLiveData
+import com.mas.firebasetutorial.ui.fragment.login.LoginResult
 import com.mas.firebasetutorial.ui.fragment.login.data.model.LoggedInUser
 
 /**
@@ -27,15 +29,9 @@ class LoginRepository(val dataSource: LoginDataSource) {
         dataSource.logout()
     }
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    fun login(username: String, password: String, loginResult: MutableLiveData<LoginResult>) {
         // handle login
-        val result = dataSource.login(username, password)
-
-        if (result is Result.Success) {
-            setLoggedInUser(result.data)
-        }
-
-        return result
+        dataSource.login(username, password, loginResult)
     }
 
     private fun setLoggedInUser(loggedInUser: LoggedInUser) {

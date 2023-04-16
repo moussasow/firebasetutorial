@@ -3,26 +3,30 @@ package com.mas.firebasetutorial.ui.fragment.login
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.annotation.StringRes
-import androidx.fragment.app.Fragment
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.mas.firebasetutorial.databinding.FragmentLoginBinding
 
 import com.mas.firebasetutorial.R
 import com.mas.firebasetutorial.ui.fragment.BaseFragment
+import com.mas.firebasetutorial.ui.fragment.top.TopFragment
 
 class LoginFragment : BaseFragment() {
 
     companion object {
-        fun newInstance(dummy: String): LoginFragment {
+        const val BUNDLE_AUTH_TYPE = "BUNDLE_AUTH_TYPE"
+        const val AUTH_TYPE_REGISTER = 0
+        const val AUTH_TYPE_LOGIN = 1
+
+        fun newInstance(type: Int): LoginFragment {
             val args = Bundle()
-            args.putString("dummy", dummy)
+            args.putInt(BUNDLE_AUTH_TYPE, type)
             val fragment = LoginFragment()
             fragment.arguments = args
             return fragment
@@ -30,7 +34,8 @@ class LoginFragment : BaseFragment() {
     }
     private lateinit var loginViewModel: LoginViewModel
     private var _binding: FragmentLoginBinding? = null
-
+    private lateinit var auth: FirebaseAuth
+    private var authType: Int = 0
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -48,9 +53,14 @@ class LoginFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        auth = Firebase.auth
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
             .get(LoginViewModel::class.java)
 
+        val args = arguments
+        if (args != null) {
+            authType = args.getInt(BUNDLE_AUTH_TYPE)
+        }
         val usernameEditText = binding.username
         val passwordEditText = binding.password
         val loginButton = binding.login
@@ -82,48 +92,37 @@ class LoginFragment : BaseFragment() {
                 }
             })
 
-        val afterTextChangedListener = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                // ignore
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // ignore
-            }
-
-            override fun afterTextChanged(s: Editable) {
-                loginViewModel.loginDataChanged(
-                    usernameEditText.text.toString(),
-                    passwordEditText.text.toString()
-                )
-            }
-        }
-        usernameEditText.addTextChangedListener(afterTextChangedListener)
-        passwordEditText.addTextChangedListener(afterTextChangedListener)
-        passwordEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                loginViewModel.login(
-                    usernameEditText.text.toString(),
-                    passwordEditText.text.toString()
-                )
-            }
-            false
-        }
-
         loginButton.setOnClickListener {
             loadingProgressBar.visibility = View.VISIBLE
             loginViewModel.login(
                 usernameEditText.text.toString(),
-                passwordEditText.text.toString()
+                passwordEditText.text.toString(),
+                authType
             )
         }
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        updateUi()
+    }
+
+    private fun updateUi() {
+        if (authType == AUTH_TYPE_REGISTER) {
+            binding.login.text= "Register"
+            return
+        }
+
+        binding.login.text= "Log in"
+
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome) + model.displayName
-        // TODO : initiate successful logged in experience
-        val appContext = context?.applicationContext ?: return
-        Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
+        displaySnackBar(binding.root, welcome)
+        transitFragment(TopFragment.newInstance(model.userName, model.displayName))
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
