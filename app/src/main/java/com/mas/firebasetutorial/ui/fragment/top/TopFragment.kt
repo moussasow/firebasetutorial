@@ -1,15 +1,18 @@
 package com.mas.firebasetutorial.ui.fragment.top
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.firebase.auth.FirebaseAuth
-import com.mas.firebasetutorial.R
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.mas.firebasetutorial.common.Utility.createUserDbRef
 import com.mas.firebasetutorial.databinding.FragmentTopBinding
 import com.mas.firebasetutorial.ui.fragment.BaseFragment
 import com.mas.firebasetutorial.ui.fragment.login.LoginFragment
+import com.mas.firebasetutorial.ui.fragment.top.data.UserModel
 
 private const val ARG_USERNAME = "ARG_USERNAME"
 private const val ARG_DISPLAY_NAME = "ARG_DISPLAY_NAME"
@@ -22,7 +25,7 @@ class TopFragment : BaseFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(username: String, name: String) =
+        fun newInstance(username: String?, name: String?) =
             TopFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_USERNAME, username)
@@ -53,17 +56,46 @@ class TopFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        updateUi()
+        requestFromDatabase()
 
         binding.btnLogout.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
             transitFragment(LoginFragment.newInstance(LoginFragment.AUTH_TYPE_LOGIN))
         }
+
+        binding.apply {
+            btnRecord.setOnClickListener {
+                val map: HashMap<String, Any> = HashMap()
+                map["Username"] = editUsername.text.toString()
+                map["Phone"] = editPhone.text.toString()
+                createDatabase(map)
+            }
+        }
     }
 
-    private fun updateUi() {
+    private fun createDatabase(map: HashMap<String, Any>) {
+        createUserDbRef(userName).updateChildren(map)
+    }
+
+    private fun requestFromDatabase() {
+        val databaseReference = createUserDbRef(userName)
+
+        databaseReference.addValueEventListener(object :ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val data = snapshot.getValue(UserModel::class.java)
+                data?.let { updateUi(it.Username) }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                updateUi("No user name")
+            }
+        })
+
+
+    }
+    private fun updateUi(username: String) {
         binding.apply {
-            textName.text = displayName
+            textName.text = username
         }
     }
 
