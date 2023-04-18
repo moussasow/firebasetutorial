@@ -44,7 +44,7 @@
 
     <Button
         android:id="@+id/login"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginStart="48dp"
@@ -52,6 +52,7 @@
         android:layout_marginEnd="48dp"
         android:layout_marginBottom="64dp"
         android:text="@string/action_sign_in"
+        android:background="@drawable/custom_button_shape"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

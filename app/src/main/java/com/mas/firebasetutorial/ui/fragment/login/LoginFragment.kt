@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.mas.firebasetutorial.databinding.FragmentLoginBinding
 
 import com.mas.firebasetutorial.R
+import com.mas.firebasetutorial.common.Utility
 import com.mas.firebasetutorial.ui.fragment.BaseFragment
 import com.mas.firebasetutorial.ui.fragment.top.TopFragment
 
@@ -61,6 +62,12 @@ class LoginFragment : BaseFragment() {
         if (args != null) {
             authType = args.getInt(BUNDLE_AUTH_TYPE)
         }
+
+        initViews()
+
+    }
+
+    private fun initViews() {
         val usernameEditText = binding.username
         val passwordEditText = binding.password
         val loginButton = binding.login
@@ -93,12 +100,12 @@ class LoginFragment : BaseFragment() {
             })
 
         loginButton.setOnClickListener {
-            loadingProgressBar.visibility = View.VISIBLE
-            loginViewModel.login(
-                usernameEditText.text.toString(),
-                passwordEditText.text.toString(),
-                authType
-            )
+            val email = usernameEditText.text.toString()
+            val password = passwordEditText.text.toString()
+            if (Utility.checkUserInput(email, password, it)) {
+                loadingProgressBar.visibility = View.VISIBLE
+                loginViewModel.login(email, password, authType)
+            }
         }
 
     }

@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.mas.firebasetutorial.common.Utility
 import com.mas.firebasetutorial.common.Utility.createUserDbRef
 import com.mas.firebasetutorial.databinding.FragmentTopBinding
 import com.mas.firebasetutorial.ui.fragment.BaseFragment
@@ -65,29 +67,46 @@ class TopFragment : BaseFragment() {
 
         binding.apply {
             btnRecord.setOnClickListener {
-                val map: HashMap<String, Any> = HashMap()
-                map["Username"] = editUsername.text.toString()
-                map["Phone"] = editPhone.text.toString()
-                createDatabase(map)
+                val username = editUsername.text.toString()
+                if (Utility.checkUserName(username, it)) {
+                    binding.progressBar.visibility = View.VISIBLE
+                    val map: HashMap<String, Any> = HashMap()
+                    map["Username"] = username
+                    map["Phone"] = editPhone.text.toString()
+                    createDatabase(map)
+                }
+            }
+
+            btnUserUpdate.setOnClickListener {
+
             }
         }
     }
 
     private fun createDatabase(map: HashMap<String, Any>) {
-        createUserDbRef(userName).updateChildren(map)
+        createUserDbRef(userName).updateChildren(map).addOnCompleteListener {
+            binding.progressBar.visibility = View.GONE
+        }
     }
 
     private fun requestFromDatabase() {
+        binding.progressBar.visibility = View.VISIBLE
         val databaseReference = createUserDbRef(userName)
 
         databaseReference.addValueEventListener(object :ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val data = snapshot.getValue(UserModel::class.java)
-                data?.let { updateUi(it.Username) }
+                if (data == null) {
+                    updateUi("")
+                } else {
+                    updateUi(data.Username)
+                }
+                binding.progressBar.visibility = View.GONE
             }
 
             override fun onCancelled(error: DatabaseError) {
-                updateUi("No user name")
+                updateUi("")
+                binding.progressBar.visibility = View.GONE
             }
         })
 
@@ -97,6 +116,18 @@ class TopFragment : BaseFragment() {
         binding.apply {
             textName.text = username
         }
+
+        setViewsVisibility (username.isEmpty())
     }
 
+    private fun setViewsVisibility(isNew : Boolean) {
+        binding.apply {
+            layoutUser.isVisible = isNew
+            textWelcome.isVisible = isNew
+            editUsername.isVisible = isNew
+            editPhone.isVisible = isNew
+            btnRecord.isVisible = isNew
+            layoutUser.isVisible = !isNew
+        }
+    }
 }
