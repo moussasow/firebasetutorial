@@ -5,9 +5,13 @@ import android.os.Bundle
 import com.google.firebase.auth.FirebaseAuth
 import com.mas.firebasetutorial.databinding.ActivityMainBinding
 import com.mas.firebasetutorial.ui.fragment.BaseFragment
+import com.mas.firebasetutorial.ui.fragment.info.InfoFragment
 import com.mas.firebasetutorial.ui.fragment.login.LoginFragment
 import com.mas.firebasetutorial.ui.fragment.main.MainFragment
+import com.mas.firebasetutorial.ui.fragment.map.MapFragment
+import com.mas.firebasetutorial.ui.fragment.notification.NotificationFragment
 import com.mas.firebasetutorial.ui.fragment.top.TopFragment
+import com.mas.firebasetutorial.ui.fragment.upload.UploadFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,10 +46,10 @@ class MainActivity : AppCompatActivity() {
                         MainFragment.newInstance()
                     }
                 }
-                R.id.nav_upload -> TopFragment()
-                R.id.nav_map -> LoginFragment()
-                R.id.nav_notification -> TopFragment()
-                R.id.nav_info -> LoginFragment()
+                R.id.nav_upload -> UploadFragment()
+                R.id.nav_map -> MapFragment()
+                R.id.nav_notification -> NotificationFragment()
+                R.id.nav_info -> InfoFragment()
                 else -> MainFragment.newInstance()
             }
 
