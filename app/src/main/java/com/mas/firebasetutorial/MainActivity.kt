@@ -1,9 +1,15 @@
 package com.mas.firebasetutorial
 
+import android.app.ActivityManager
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.mas.firebasetutorial.databinding.ActivityMainBinding
+import com.mas.firebasetutorial.features.Experimental
+import com.mas.firebasetutorial.features.ForegroundCheckTask
 import com.mas.firebasetutorial.ui.fragment.BaseFragment
 import com.mas.firebasetutorial.ui.fragment.info.InfoFragment
 import com.mas.firebasetutorial.ui.fragment.login.LoginFragment
@@ -12,6 +18,7 @@ import com.mas.firebasetutorial.ui.fragment.map.MapFragment
 import com.mas.firebasetutorial.ui.fragment.notification.NotificationFragment
 import com.mas.firebasetutorial.ui.fragment.top.TopFragment
 import com.mas.firebasetutorial.ui.fragment.upload.UploadFragment
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,6 +40,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         initBottomNavigation()
+        /*
+        lifecycleScope.launch {
+            val foreground = Experimental.isAppOnForeground(this@MainActivity)
+            if (foreground) {
+                Experimental.showToast(this@MainActivity,"The app is in the foreground")
+            } else {
+                Experimental.showToast(this@MainActivity, "The app is not in the foreground")
+            }
+        } */
     }
 
     private fun initBottomNavigation() {

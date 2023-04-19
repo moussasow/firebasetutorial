@@ -39,6 +39,11 @@ class MapFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_map, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        showTitle("Map")
+    }
     companion object {
         /**
          * Use this factory method to create a new instance of

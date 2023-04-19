@@ -59,7 +59,7 @@ class TopFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requestFromDatabase()
-
+        showTitle("Top")
         binding.btnLogout.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
             transitFragment(LoginFragment.newInstance(LoginFragment.AUTH_TYPE_LOGIN))

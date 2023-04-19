@@ -36,7 +36,7 @@ class MainFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        showTitle("Main")
         binding.apply {
             btnLogin.setOnClickListener {
                 transitFragment(LoginFragment.newInstance(LoginFragment.AUTH_TYPE_LOGIN))
