@@ -27,6 +27,10 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+        const val BUNDLE_NOTIFICATION = "BUNDLE_NOTIFICATION"
+    }
+
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +38,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (savedInstanceState == null) {
+        val extras = intent.extras
+        var isNotification = false
+        if (extras != null) {
+            isNotification = extras.getBoolean(BUNDLE_NOTIFICATION, false)
+        }
+
+        if (isNotification) {
+            binding.bottomNav.selectedItemId = R.id.nav_notification
+            navigateFragment(NotificationFragment.newInstance("", ""))
+        } else if (savedInstanceState == null) {
             val user = FirebaseAuth.getInstance().currentUser
             val fragment: BaseFragment = if (user != null) {
                 TopFragment.newInstance(user.email, user.displayName)
@@ -54,6 +67,7 @@ class MainActivity : AppCompatActivity() {
                 Experimental.showToast(this@MainActivity, "The app is not in the foreground")
             }
         } */
+        askNotificationPermission()
     }
 
     private fun initBottomNavigation() {
@@ -91,8 +105,10 @@ class MainActivity : AppCompatActivity() {
     ) { isGranted: Boolean ->
         if (isGranted) {
             // FCM SDK (and your app) can post notifications.
+            Toast.makeText(this, "Permission guaranteed", Toast.LENGTH_SHORT).show()
         } else {
             // TODO: Inform user that that your app will not show notifications.
+            Toast.makeText(this, "notifications Permission denied", Toast.LENGTH_SHORT).show()
         }
     }
 
